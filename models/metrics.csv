@@ -1,0 +1,5 @@
+"target","model","MAE","RMSE","R2","R2_log","Range_coverage"
+"views","linear_regression",30075602.3,129472974.77,-0.029,0.107,NA
+"views","random_forest",30066432.86,129465491.49,-0.029,0.165,0.791
+"comments","linear_regression",1460.94,3320.58,-0.062,0.331,0.769
+"comments","random_forest",1530.16,3212.33,0.006,0.234,NA
