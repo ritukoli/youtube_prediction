@@ -2,7 +2,7 @@ DATA_PATH <- "data/youtube_dataset.csv"
 MODEL_DIR <- "models"
 PLOT_DIR  <- "plots"
 
-TARGETS <- c("views", "comments")
+TARGETS <- c("views", "comments", "likes")
 
 NUM_FEATURES <- c("subscribers", "duration_sec", "title_length")
 CAT_FEATURES <- c("category")
@@ -14,7 +14,7 @@ SHORTS_MAX_SECONDS <- 60
 
 GROUP_COL <- "channel_id"
 
-EXTRA_COLS <- c("likes", "video_type")
+EXTRA_COLS <- c("video_type")
 
 SEED           <- 42
 TRAIN_FRACTION <- 0.8

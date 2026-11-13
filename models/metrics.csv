@@ -1,5 +1,7 @@
 "target","model","MAE","RMSE","R2","R2_log","Range_coverage"
-"views","linear_regression",30075602.3,129472974.77,-0.029,0.107,NA
-"views","random_forest",30066432.86,129465491.49,-0.029,0.165,0.791
-"comments","linear_regression",1460.94,3320.58,-0.062,0.331,0.769
-"comments","random_forest",1530.16,3212.33,0.006,0.234,NA
+"views","linear_regression",60574021.18,449650949.17,0.011,0.351,NA
+"views","random_forest",59933203.57,435997668.88,0.07,0.283,0.74
+"comments","linear_regression",9690.48,83347.19,0.009,0.358,NA
+"comments","random_forest",9234.48,79653.05,0.095,0.393,0.779
+"likes","linear_regression",488765.79,2547289.5,0.032,0.435,0.856
+"likes","random_forest",497127.9,2473695.3,0.087,0.358,NA

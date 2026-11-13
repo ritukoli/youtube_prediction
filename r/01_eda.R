@@ -14,7 +14,7 @@ save_plot <- function(p, name) {
 }
 
 cat("\n--- Summary ---\n")
-print(summary(df[, c(TARGETS, NUM_FEATURES, "likes")]))
+print(summary(df[, unique(c(TARGETS, NUM_FEATURES, "likes"))]))
 
 p <- ggplot(df, aes(x = views)) +
   geom_histogram(bins = 40, fill = "steelblue", colour = "white") +
@@ -75,7 +75,7 @@ p <- ggplot(df, aes(x = video_type, y = views, fill = video_type)) +
   labs(title = "Views: Shorts vs long-form (log scale)", x = NULL, y = "Views")
 save_plot(p, "06_shorts_vs_longform.png")
 
-num_cols <- c(TARGETS, NUM_FEATURES, "likes")
+num_cols <- unique(c(TARGETS, NUM_FEATURES, "likes"))
 cor_mat <- cor(log1p(df[, num_cols]), use = "pairwise.complete.obs")
 cat("\n--- Correlation matrix (log1p of each variable) ---\n")
 print(round(cor_mat, 2))
