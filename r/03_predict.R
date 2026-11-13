@@ -1,30 +1,14 @@
-# 03_predict.R
-# Loads the saved models and predicts. Called from Python, never trains.
-#
-# Usage (from the project root):
-#   Rscript R/03_predict.R '{"subscribers":50000,"duration_sec":720,"title_length":55,"category":"Technology"}'
-#   Rscript R/03_predict.R path/to/input.json     # safer on Windows / PowerShell
-#
-# Prints ONE line of JSON to stdout, e.g.:
-#   {"predicted_views":18500,"predicted_views_low":3000,"predicted_views_high":90000,
-#    "predicted_comments":145,"predicted_comments_low":20,"predicted_comments_high":700}
-# "low" and "high" are the ends of the likely range (see INTERVAL in 00_config.R).
-# On error it prints a message to stderr and exits with status 1.
-
 suppressPackageStartupMessages({
   library(jsonlite)
   library(ranger)
 })
 
-# Find the project's models/ folder no matter where R is started from
 script_dir <- function() {
   f <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE))
   if (length(f) > 0) dirname(normalizePath(f[1])) else "R"
 }
 MODEL_DIR <- file.path(dirname(script_dir()), "models")
 
-# Turn the user's JSON into a one-row data frame with the exact feature
-# names, types and factor levels used in training.
 build_newdata <- function(b, input) {
   missing <- setdiff(b$features, names(input))
   if (length(missing) > 0) {
@@ -36,7 +20,6 @@ build_newdata <- function(b, input) {
     v <- suppressWarnings(as.numeric(input[[f]]))
     if (length(v) != 1 || is.na(v)) stop("Field '", f, "' must be a single number")
     if (v < 0) stop("Field '", f, "' cannot be negative")
-    # Same log transform that was applied during training
     vals[[f]] <- if (f %in% b$log_features) log1p(v) else v
   }
   for (f in b$cat_features) {
@@ -52,8 +35,6 @@ build_newdata <- function(b, input) {
                         list(stringsAsFactors = FALSE, check.names = FALSE)))
 }
 
-# Models were trained on log1p(target), so convert back with expm1().
-# Returns the point estimate plus the low/high ends of the likely range.
 predict_one <- function(b, newdata) {
   if (is.null(b$interval)) {
     stop("This model file is from an older version. Re-run: Rscript R/02_train.R")

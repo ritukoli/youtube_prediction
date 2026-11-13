@@ -10,17 +10,16 @@ import streamlit as st
 
 from r_bridge import load_choices, load_metrics, models_ready, predict
 
-SHORTS_MAX_SECONDS = 60  # keep in sync with SHORTS_MAX_SECONDS in R/00_config.R
-WIDE_RANGE_RATIO = 20    # warn when the high end is this many times the low end
-ACCENT = "#4c8bf5"       # range bar colour
-REF_COLOR = "#f5a623"    # "your average" marker colour
+SHORTS_MAX_SECONDS = 60  
+WIDE_RANGE_RATIO = 20    
+ACCENT = "#4c8bf5"       
+REF_COLOR = "#f5a623"    
 
 st.set_page_config(
     page_title="YouTube Performance Predictor", page_icon="📈", layout="wide"
 )
 
 
-# ---- Small helpers ----------------------------------------------------------
 def short_number(n):
     """1733046 -> '1.7M', 15000 -> '15K', 100 -> '100'."""
     for limit, suffix in ((1e9, "B"), (1e6, "M"), (1e3, "K")):
@@ -91,7 +90,6 @@ def render_forecast(last):
     )
     video_type = "Short" if payload["duration_sec"] <= SHORTS_MAX_SECONDS else "Long-form"
 
-    # -- Headline numbers -----------------------------------------------------
     views_help = (
         "A central estimate for videos like this in the training data. "
         "Real results vary a lot, so look at the likely range below."
@@ -117,7 +115,6 @@ def render_forecast(last):
         else:
             st.metric("Video type", video_type)
 
-    # -- Likely range ---------------------------------------------------------
     with st.container(border=True):
         st.subheader("Likely range")
         st.caption("80% of similar videos in the dataset fall inside the shaded bar.")
@@ -148,7 +145,6 @@ def render_forecast(last):
                 "kind of video. Treat the typical value as a rough guide only."
             )
 
-    # -- Details + disclaimer --------------------------------------------------
     details = [
         f"Video type: {video_type}",
         f"Title length: {payload['title_length']} characters",
@@ -165,8 +161,6 @@ def render_forecast(last):
         "treat it."
     )
 
-
-# ---- Make sure the models exist ---------------------------------------------
 st.title("📈 YouTube Video Performance Predictor")
 st.caption(
     "Estimate typical views and comments for a planned video, based on a model "
@@ -182,7 +176,6 @@ if not models_ready():
 
 categories = load_choices()["category"]
 
-# ---- Sidebar: input form ------------------------------------------------------
 with st.sidebar:
     st.header("Video details")
     with st.form("inputs"):
@@ -206,7 +199,7 @@ with st.sidebar:
 
         submitted = st.form_submit_button("Predict performance", type="primary")
 
-# ---- Run the prediction when the form is submitted ---------------------------
+# Run the prediction when the form is submitted
 error = None
 if submitted:
     duration_sec = int(minutes) * 60 + int(seconds)
@@ -233,7 +226,7 @@ if submitted:
         except RuntimeError as err:
             error = f"Prediction failed: {err}"
 
-# ---- Main area ----------------------------------------------------------------
+# Main area 
 tab_forecast, tab_about = st.tabs(["Forecast", "About the model"])
 
 with tab_forecast:

@@ -1,7 +1,3 @@
-# 01_eda.R
-# Exploratory data analysis. Prints summary stats and saves plots to plots/.
-# Run from the project root:  Rscript R/01_eda.R
-
 suppressPackageStartupMessages({
   library(dplyr)
   library(ggplot2)
@@ -17,18 +13,15 @@ save_plot <- function(p, name) {
   cat("Saved", file.path(PLOT_DIR, name), "\n")
 }
 
-# ---- Summary statistics ----------------------------------------------------
 cat("\n--- Summary ---\n")
 print(summary(df[, c(TARGETS, NUM_FEATURES, "likes")]))
 
-# ---- 1. Distribution of views (log scale because views are very skewed) ---
 p <- ggplot(df, aes(x = views)) +
   geom_histogram(bins = 40, fill = "steelblue", colour = "white") +
   scale_x_log10() +
   labs(title = "Distribution of views (log scale)", x = "Views", y = "Videos")
 save_plot(p, "01_views_distribution.png")
 
-# ---- 2. Subscribers vs views ----------------------------------------------
 p <- ggplot(df, aes(x = subscribers, y = views)) +
   geom_point(alpha = 0.4, colour = "steelblue") +
   geom_smooth(method = "lm", formula = y ~ x, colour = "firebrick") +
@@ -36,7 +29,6 @@ p <- ggplot(df, aes(x = subscribers, y = views)) +
   labs(title = "Subscribers vs views (log-log)", x = "Subscribers", y = "Views")
 save_plot(p, "02_subscribers_vs_views.png")
 
-# ---- 3. Duration vs views --------------------------------------------------
 p <- ggplot(df, aes(x = duration_sec, y = views)) +
   geom_point(alpha = 0.4, colour = "darkorange") +
   geom_smooth(method = "loess", formula = y ~ x, colour = "firebrick") +
@@ -45,7 +37,6 @@ p <- ggplot(df, aes(x = duration_sec, y = views)) +
        x = "Duration (seconds)", y = "Views")
 save_plot(p, "03_duration_vs_views.png")
 
-# ---- 4. Likes vs comments --------------------------------------------------
 p <- ggplot(filter(df, !is.na(comments), comments > 0, likes > 0),
             aes(x = likes, y = comments)) +
   geom_point(alpha = 0.4, colour = "darkgreen") +
@@ -54,7 +45,6 @@ p <- ggplot(filter(df, !is.na(comments), comments > 0, likes > 0),
   labs(title = "Likes vs comments (log-log)", x = "Likes", y = "Comments")
 save_plot(p, "04_likes_vs_comments.png")
 
-# ---- 5. Which categories get more views? -----------------------------------
 cat_stats <- df %>%
   group_by(category) %>%
   summarise(videos = n(),
@@ -72,7 +62,6 @@ p <- ggplot(cat_stats, aes(x = reorder(category, median_views), y = median_views
   labs(title = "Median views by category", x = "Category", y = "Median views")
 save_plot(p, "05_views_by_category.png")
 
-# ---- 6. Shorts vs long-form -------------------------------------------------
 type_stats <- df %>%
   group_by(video_type) %>%
   summarise(videos = n(), median_views = median(views),
@@ -86,7 +75,6 @@ p <- ggplot(df, aes(x = video_type, y = views, fill = video_type)) +
   labs(title = "Views: Shorts vs long-form (log scale)", x = NULL, y = "Views")
 save_plot(p, "06_shorts_vs_longform.png")
 
-# ---- 7. Correlation heatmap (log scale, since the data is very skewed) -----
 num_cols <- c(TARGETS, NUM_FEATURES, "likes")
 cor_mat <- cor(log1p(df[, num_cols]), use = "pairwise.complete.obs")
 cat("\n--- Correlation matrix (log1p of each variable) ---\n")

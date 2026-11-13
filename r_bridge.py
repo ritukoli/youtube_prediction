@@ -1,9 +1,3 @@
-"""Python -> R bridge.
-
-app.py calls predict(); this module runs R/03_predict.R with Rscript and
-returns the predictions. It also reads the small files that 02_train.R saves
-in models/ (dropdown choices and evaluation metrics).
-"""
 import json
 import subprocess
 import tempfile
@@ -42,8 +36,7 @@ def predict(user_data: dict) -> dict:
     Raises RuntimeError with a readable message if R is missing or the
     prediction fails.
     """
-    # Pass the JSON through a temp file: quoting JSON on the command line is
-    # unreliable on Windows.
+
     with tempfile.NamedTemporaryFile(
         "w", suffix=".json", delete=False, encoding="utf-8"
     ) as f:
@@ -69,7 +62,6 @@ def predict(user_data: dict) -> dict:
     finally:
         Path(input_path).unlink(missing_ok=True)
 
-    # R prints a single line of JSON; take the last non-empty line to be safe
     lines = [line for line in result.stdout.splitlines() if line.strip()]
     if not lines:
         raise RuntimeError("R returned no output.")
