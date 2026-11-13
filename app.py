@@ -127,12 +127,17 @@ if submitted:
         details.append(f"Comments per 1,000 views: {comments / views * 1000:.1f}")
     st.caption(" · ".join(details))
 
+    # Numbered labels keep the bars in this order (the chart sorts by name)
+    labels = ["1. Low end of range", "2. Typical", "3. High end of range"]
+    values = [views_low, views, views_high]
     if avg_views > 0:
-        chart_data = pd.DataFrame(
-            {"Views": [avg_views, views]},
-            index=["Your average (last 5)", "Typical (predicted)"],
-        )
-        st.bar_chart(chart_data)
+        labels.append("4. Your average (last 5)")
+        values.append(avg_views)
+    st.bar_chart(pd.DataFrame({"Views": values}, index=labels))
+    st.caption(
+        "Predicted views. The bars use a normal (not log) scale, so when the "
+        "range is wide the low end looks tiny next to the high end."
+    )
 
     st.info(
         "These numbers describe videos similar to yours in the training "
